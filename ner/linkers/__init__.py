@@ -1,0 +1,1 @@
+from .dbpedia_linker import DBPediaLinker

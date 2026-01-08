@@ -1,0 +1,10 @@
+requests
+tqdm
+python-dotenv
+pydantic
+pandas
+openpyxl
+langchain==0.3.7
+langchain-gigachat==0.3.12
+stanza==1.11.0
+questionary
