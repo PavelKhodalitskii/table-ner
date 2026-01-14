@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 from typing import List
 
@@ -12,34 +13,30 @@ from ner.base.linker import Linker
 from ner.base.models import (Entity, 
                              LinkedEntity, 
                              NERType, 
-                             LinkingType)
+                             LinkingType,
+                             NERResult,
+                             LinkingResult)
 from tqdm import tqdm
 
 
 def retrive_entities(retriever: EntityRetriever, source_series: pd.Series):
-    ner_result = []
+    ner_results = []
 
     for row in tqdm(source_series):
-        entities = retriever.retrive(str(row))
+        ner_results.append(NERResult(sentences=retriever.retrive(str(row))))
 
-        retrived_sentences = []
+    return ner_results
 
-        for sentence in entities:
-            retrived_sentences.append([entity.model_dump_json() for entity in sentence])
-        
-        ner_result.append(retrived_sentences)
-    
-    return ner_result
-
-def link_entities(linker: Linker, entities: List[List[Entity]]) -> List[List[LinkedEntity]]:
+def link_entities(linker: Linker, entities: List[NERResult]) -> List[List[LinkedEntity]]:
     linked_entities = []
 
-    for row in tqdm(entities):
+    for ner_result in tqdm(entities):
         linked_sentences = []
-        for sentence in row:
-            linked_sentences.append([linker.link(Entity.model_validate_json(entity)).link for entity in sentence])
 
-        linked_entities.append(linked_sentences)
+        for sentence in ner_result.sentences:
+            linked_sentences.append([linker.link(entity).link for entity in sentence])
+
+        linked_entities.append(LinkingResult(sentences=linked_sentences))
 
     return linked_entities
         
@@ -61,12 +58,12 @@ def main(src_file_path: str | Path,
     retriever = RetrieverFactory.create_from_ner_type(ner_type=ner_type)
      
     entities = retrive_entities(retriever=retriever, source_series=data_frame[src_column])
-    data_frame[ner_column_name] = entities
+    data_frame[ner_column_name] = [ner_result.model_dump_json() for ner_result in entities]
 
     if link:
         linker = LinkerFactory.create_from_linking_type(linking_type=linking_type)
         linked_entities = link_entities(linker=linker, entities=entities)
-        data_frame[nel_column_name] = linked_entities
+        data_frame[nel_column_name] = [link_result.model_dump_json() for link_result in linked_entities]
     
     TableFactory.dump_to_file(data_frame=data_frame, file_path=output_file_path)
 

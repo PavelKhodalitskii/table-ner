@@ -1,4 +1,5 @@
 from enum import Enum
+from typing import List
 from pydantic import BaseModel
 
 
@@ -18,3 +19,9 @@ class Entity(BaseModel):
 class LinkedEntity(BaseModel):
     entity: Entity
     link: str
+
+class NERResult(BaseModel): 
+    sentences: List[List[Entity]]
+
+class LinkingResult(BaseModel):
+    sentences: List[List[str]]
