@@ -10,7 +10,7 @@ class StanzaRetriever(EntityRetriever):
     def __init__(self):
         self.nlp = stanza.Pipeline('ru', processors='tokenize,ner')
 
-    def retrive(self, text: str) -> List[List[Entity]]:
+    def retrieve(self, text: str) -> List[List[Entity]]:
         doc = self.nlp(str(text))
         sentences = doc.sentences
 

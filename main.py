@@ -23,7 +23,7 @@ def retrive_entities(retriever: EntityRetriever, source_series: pd.Series):
     ner_results = []
 
     for row in tqdm(source_series):
-        ner_results.append(NERResult(sentences=retriever.retrive(str(row))))
+        ner_results.append(NERResult(sentences=retriever.retrieve(str(row))))
 
     return ner_results
 

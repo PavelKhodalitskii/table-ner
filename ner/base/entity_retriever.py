@@ -6,6 +6,5 @@ from .models import Entity
 
 class EntityRetriever(ABC):
     @abstractmethod
-    def retrive(self, text: str) -> List[List[Entity]]:
+    def retrieve(self, text: str) -> List[List[Entity]]:
         pass
-    

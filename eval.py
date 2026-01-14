@@ -229,7 +229,7 @@ def save_report_to_file(file_path: Path, metrics: Dict):
 
 def main():
     print("Starting NER Evaluation...")
-    base_path = Path("data") / "copy" / "ru"
+    base_path = Path("data") / "NER_LLM" / "ru"
     evaluate_ner_dataset(base_path)
     print("\nEvaluation completed!")
 
